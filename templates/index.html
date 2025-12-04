@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h2>Votre élégance, votre signature</h2>
+        <p>Découvrez une collection raffinée de parfums et produits de beauté</p>
+        <a href="{{ url_for('boutique') }}" class="btn btn-primary">Découvrir la boutique</a>
+    </div>
+</section>
+
+<section class="section nouveautes">
+    <div class="container">
+        <h2 class="section-title">Nouveautés</h2>
+        <div class="products-grid">
+            {% for produit in nouveaux_produits %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ url_for('static', filename='images/products/' + produit.image) }}" alt="{{ produit.nom }}">
+                </div>
+                <div class="product-info">
+                    <h3>{{ produit.nom }}</h3>
+                    <p class="product-price">{{ "%.2f"|format(produit.prix) }} €</p>
+                    <a href="{{ url_for('produit', produit_id=produit.id) }}" class="btn btn-outline">Voir le produit</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section bestsellers">
+    <div class="container">
+        <h2 class="section-title">Best-sellers</h2>
+        <div class="products-grid">
+            {% for produit in bestsellers %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ url_for('static', filename='images/products/' + produit.image) }}" alt="{{ produit.nom }}">
+                </div>
+                <div class="product-info">
+                    <h3>{{ produit.nom }}</h3>
+                    <p class="product-price">{{ "%.2f"|format(produit.prix) }} €</p>
+                    <a href="{{ url_for('produit', produit_id=produit.id) }}" class="btn btn-outline">Voir le produit</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section about-preview">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>La Maison du Parfum</h2>
+                <p>Depuis notre création, nous nous engageons à vous offrir des produits de beauté d'exception, alliant qualité, élégance et raffinement.</p>
+                <a href="{{ url_for('a_propos') }}" class="btn btn-primary">Notre histoire</a>
+            </div>
+            <div class="about-image">
+                <!-- Image placeholder -->
+                <div class="image-placeholder"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

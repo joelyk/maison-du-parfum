@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Boutique - La Maison du Parfum{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Boutique</h2>
+
+        <!-- Filtres catégories -->
+        <div style="margin-bottom: 2rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+            <form method="get" action="{{ url_for('boutique') }}">
+                <label for="categorie" style="margin-right:0.5rem;">Catégorie :</label>
+                <select name="categorie" id="categorie" onchange="this.form.submit()">
+                    <option value="">Toutes les catégories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat }}" {% if cat == categorie_actuelle %}selected{% endif %}>
+                            {{ cat|replace('-', ' ')|title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        <!-- Grille produits -->
+        {% if produits %}
+        <div class="products-grid">
+            {% for produit in produits %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ url_for('static', filename='images/products/' + produit.image) }}" alt="{{ produit.nom }}">
+                </div>
+                <div class="product-info">
+                    <h3>{{ produit.nom }}</h3>
+                    <p class="product-price">{{ "%.2f"|format(produit.prix) }} €</p>
+                    <a href="{{ url_for('produit', produit_id=produit.id) }}" class="btn btn-outline">Voir le produit</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p>Aucun produit trouvé pour cette catégorie.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

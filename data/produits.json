@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "nom": "Parfum Élégance",
+    "prix": 89.9,
+    "categorie": "parfums",
+    "description_courte": "Un parfum raffiné aux notes florales et boisées",
+    "description": "Ce parfum délicat mêle des notes de rose, de jasmin et de santal pour une élégance intemporelle. Parfait pour les occasions spéciales.",
+    "image": "parfum-elegance.jpg",
+    "stock": 15,
+    "notes": "Notes de tête: Bergamote, Notes de cœur: Rose, Jasmin, Notes de fond: Santal, Vanille",
+    "contenance": "100ml",
+    "type_peau": "Tous types",
+    "pour_qui": "Femme"
+  },
+  {
+    "id": 2,
+    "nom": "Crème Hydratante Luxe",
+    "prix": 45.5,
+    "categorie": "soins-visage",
+    "description_courte": "Hydratation intense pour une peau rayonnante",
+    "description": "Cette crème riche en actifs naturels nourrit en profondeur et redonne éclat à votre peau. Formulée avec de l'acide hyaluronique et des extraits de rose.",
+    "image": "creme-hydratante.jpg",
+    "stock": 25,
+    "notes": "",
+    "contenance": "50ml",
+    "type_peau": "Peau sèche et normale",
+    "pour_qui": "Femme"
+  }
+]

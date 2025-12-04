@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}{{ produit.nom }} - La Maison du Parfum{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="product-detail">
+            <!-- Galerie produit -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    {% set image_file = produit.image or 'placeholder.jpg' %}
+                    <img src="{{ url_for('static', filename='images/products/' ~ image_file) }}"
+                         alt="{{ produit.nom }}">
+                </div>
+            </div>
+
+            <!-- Infos produit -->
+            <div class="product-info-detail">
+                <h1>{{ produit.nom }}</h1>
+
+                <!-- Bloc note moyenne + étoiles -->
+                <div class="product-rating-block">
+                    {% if note_moyenne %}
+                        <div class="rating-summary">
+                            <div class="stars-display">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= note_moyenne|round(0, 'floor') %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif i - note_moyenne < 1 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="rating-text">
+                                {{ "%.1f"|format(note_moyenne) }}/5
+                                <span class="rating-count">({{ nb_avis }} avis)</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="rating-summary">
+                            <div class="stars-display">
+                                {% for i in range(1, 6) %}
+                                    <i class="far fa-star"></i>
+                                {% endfor %}
+                            </div>
+                            <div class="rating-text">
+                                Pas encore d'avis
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if session.get('user_id') %}
+                        <form method="POST"
+                              action="{{ url_for('noter_produit', produit_id=produit.id) }}"
+                              class="rating-form">
+                            <div class="rating-stars-input">
+                                {% set user_note = avis_utilisateur.note if avis_utilisateur else 0 %}
+                                {% for i in range(5, 0, -1) %}
+                                    <input type="radio"
+                                           id="star{{ i }}"
+                                           name="note"
+                                           value="{{ i }}"
+                                           {% if user_note == i %}checked{% endif %}>
+                                    <label for="star{{ i }}" title="{{ i }} étoiles">
+                                        ★
+                                    </label>
+                                {% endfor %}
+                            </div>
+
+                            <textarea name="commentaire"
+                                      rows="2"
+                                      placeholder="Votre avis (optionnel)">{{ avis_utilisateur.commentaire if avis_utilisateur else '' }}</textarea>
+
+                            <button type="submit" class="btn btn-outline" style="margin-top:0.5rem;">
+                                Envoyer mon avis
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="rating-login-hint">
+                            <a href="{{ url_for('connexion', next=request.path) }}">Connectez-vous</a> pour laisser un avis.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <p class="product-price-detail">{{ "%.2f"|format(produit.prix) }} €</p>
+
+                <div class="product-description">
+                    <p>{{ produit.description }}</p>
+                </div>
+
+                <div class="product-specs">
+                    {% if produit.notes %}
+                    <div class="spec-item">
+                        <span class="spec-label">Notes :</span>
+                        <span>{{ produit.notes }}</span>
+                    </div>
+                    {% endif %}
+                    {% if produit.contenance %}
+                    <div class="spec-item">
+                        <span class="spec-label">Contenance :</span>
+                        <span>{{ produit.contenance }}</span>
+                    </div>
+                    {% endif %}
+                    {% if produit.type_peau %}
+                    <div class="spec-item">
+                        <span class="spec-label">Type de peau :</span>
+                        <span>{{ produit.type_peau }}</span>
+                    </div>
+                    {% endif %}
+                    {% if produit.pour_qui %}
+                    <div class="spec-item">
+                        <span class="spec-label">Pour :</span>
+                        <span>{{ produit.pour_qui }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="spec-item">
+                        <span class="spec-label">Stock :</span>
+                        <span>{{ produit.stock }} pièce(s)</span>
+                    </div>
+                </div>
+
+                <!-- Formulaire ajouter au panier -->
+                <form class="add-to-cart-form" method="post" action="{{ url_for('ajouter_au_panier') }}">
+                    <input type="hidden" name="produit_id" value="{{ produit.id }}">
+
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-btn decrease">-</button>
+                        <input type="number" name="quantite" class="quantity-input" value="1" min="1">
+                        <button type="button" class="quantity-btn increase">+</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Ajouter au panier</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Avis clients (liste) -->
+        <section class="section">
+            <h2 class="section-title">Avis clients</h2>
+            {% if avis_liste %}
+                <div class="reviews-list">
+                    {% for avis in avis_liste %}
+                        <div class="review-card">
+                            <div class="review-header">
+                                <strong>
+                                    {% if avis.utilisateur %}
+                                        {{ avis.utilisateur.prenom }} {{ avis.utilisateur.nom }}
+                                    {% else %}
+                                        Client
+                                    {% endif %}
+                                </strong>
+                                <span class="review-date">
+                                    {{ avis.cree_le.strftime('%d/%m/%Y') }}
+                                </span>
+                            </div>
+                            <div class="review-stars">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= avis.note %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% if avis.commentaire %}
+                                <p class="review-comment">
+                                    {{ avis.commentaire }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Aucun avis pour le moment. Soyez le premier à partager votre expérience ✨</p>
+            {% endif %}
+        </section>
+
+        <!-- Produits similaires -->
+        {% if similaires %}
+        <section class="section">
+            <h2 class="section-title">Vous aimerez aussi</h2>
+            <div class="products-grid">
+                {% for p in similaires %}
+                <div class="product-card">
+                    <div class="product-image">
+                        {% set img_sim = p.image or 'placeholder.jpg' %}
+                        <img src="{{ url_for('static', filename='images/products/' ~ img_sim) }}" alt="{{ p.nom }}">
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ p.nom }}</h3>
+                        <p class="product-price">{{ "%.2f"|format(p.prix) }} €</p>
+                        <a href="{{ url_for('produit', produit_id=p.id) }}" class="btn btn-outline">Voir le produit</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

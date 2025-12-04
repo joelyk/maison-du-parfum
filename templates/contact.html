@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - La Maison du Parfum{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Contact</h2>
+
+        <div class="about-content">
+            <div class="about-text">
+                <p>
+                    Une question sur un produit, une commande ou un partenariat ?  
+                    N'hésitez pas à nous écrire.
+                </p>
+
+                <p>
+                    <strong>E-mail :</strong> contact@lamaisonduparfum.com<br>
+                    <strong>Téléphone :</strong> +33 1 23 45 67 89
+                </p>
+            </div>
+
+            <div class="form-section" style="background:#f9f9f9;">
+                <form method="post" action="#">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input type="text" id="nom" name="nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

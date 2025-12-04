@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Votre panier - La Maison du Parfum{% endblock %}
+
+{% block content %}
+<section class="cart-page">
+    <div class="container">
+        <h2 class="section-title">Votre panier</h2>
+
+        {% if panier %}
+        <div class="cart-items">
+            {% for item in panier %}
+            <div class="cart-item">
+                <div class="cart-item-image">
+                    <img src="{{ url_for('static', filename='images/products/' + item.image) }}" alt="{{ item.nom }}">
+                </div>
+                <div class="cart-item-details">
+                    <h3>{{ item.nom }}</h3>
+                    <p>{{ item.description_courte }}</p>
+                </div>
+                <div class="cart-item-price">
+                    {{ "%.2f"|format(item.prix) }} €
+                </div>
+                <div class="cart-item-quantity">
+                    x {{ item.quantite }}
+                </div>
+                <div class="cart-item-total">
+                    {{ "%.2f"|format(item.sous_total) }} €
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Sous-total</span>
+                <span>{{ "%.2f"|format(total) }} €</span>
+            </div>
+            <!-- Plus tard tu pourras ajouter livraison, promo, etc. -->
+
+            <div class="summary-total">
+                <span>Total</span>
+                <span>{{ "%.2f"|format(total) }} €</span>
+            </div>
+
+            <div style="margin-top:2rem; text-align:right;">
+                <a href="{{ url_for('commande') }}" class="btn btn-primary">Passer la commande</a>
+            </div>
+        </div>
+        {% else %}
+            <p>Votre panier est vide.</p>
+            <p><a href="{{ url_for('boutique') }}" class="btn btn-outline" style="margin-top:1rem;">Retour à la boutique</a></p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

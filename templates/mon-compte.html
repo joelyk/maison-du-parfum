@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Mon compte - La Maison du Parfum{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Mon compte</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="account-layout">
+            <!-- Colonne profil -->
+            <div class="account-card">
+                <h3>Mon profil</h3>
+
+                <div class="account-profile">
+                    {% set avatar_file = utilisateur.avatar or 'avatars/default.png' %}
+                    <div class="avatar-wrapper">
+                        <img src="{{ url_for('static', filename='images/' ~ avatar_file) }}"
+                             alt="Avatar de {{ utilisateur.prenom }}"
+                             class="avatar-image">
+                    </div>
+                    <div class="profile-info">
+                        <p class="profile-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</p>
+                        <p class="profile-email">{{ utilisateur.email }}</p>
+                        <p class="profile-date-inscription">
+                            Membre depuis le {{ utilisateur.cree_le.strftime('%d/%m/%Y') }}
+                        </p>
+                    </div>
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('mon_compte') }}"
+                      class="account-form"
+                      enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="prenom">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" value="{{ utilisateur.prenom }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input type="text" id="nom" name="nom" value="{{ utilisateur.nom }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" value="{{ utilisateur.email }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="avatar">Modifier mon avatar</label>
+                        <input type="file" id="avatar" name="avatar" accept="image/*">
+                        <small class="form-help">
+                            Formats autorisés : PNG, JPG, JPEG
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </form>
+            </div>
+
+            <!-- Colonne commandes -->
+            <div class="account-card">
+                <h3>Mes commandes</h3>
+
+                {% if commandes %}
+                    <div class="orders-list">
+                        {% for commande in commandes %}
+                            <div class="order-item">
+                                <div class="order-header">
+                                    <span class="order-id">Commande #{{ commande.id }}</span>
+                                    <span class="order-date">{{ commande.date.strftime('%d/%m/%Y %H:%M') }}</span>
+                                </div>
+                                <div class="order-body">
+                                    <p><strong>Statut :</strong> {{ commande.statut|replace('_', ' ') }}</p>
+                                    <p><strong>Total :</strong> {{ "%.2f"|format(commande.total) }} €</p>
+                                    <p><strong>Livraison :</strong>
+                                        {{ commande.adresse }},
+                                        {{ commande.code_postal }} {{ commande.ville }},
+                                        {{ commande.pays }}
+                                    </p>
+
+                                    {% if commande.lignes %}
+                                        <details class="order-details">
+                                            <summary>Voir les produits de la commande</summary>
+                                            <ul>
+                                                {% for ligne in commande.lignes %}
+                                                    <li>
+                                                        {{ ligne.quantite }} ×
+                                                        {{ ligne.produit.nom if ligne.produit else "Produit supprimé" }}
+                                                        — {{ "%.2f"|format(ligne.sous_total) }} €
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </details>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Vous n'avez pas encore passé de commande.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

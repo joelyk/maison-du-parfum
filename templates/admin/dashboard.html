@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord - Admin | La Maison du Parfum{% endblock %}
+
+{% block content %}
+<section class="section admin-dashboard">
+    <div class="container">
+        <h2 class="section-title">Tableau de bord administrateur</h2>
+
+        <!-- Statistiques rapides -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p>Total commandes</p>
+                <p class="stat-number">{{ total_commandes }}</p>
+            </div>
+            <div class="stat-card">
+                <p>Produits en catalogue</p>
+                <p class="stat-number">{{ total_produits }}</p>
+            </div>
+            <div class="stat-card">
+                <p>Chiffre d'affaires (approx.)</p>
+                <p class="stat-number">{{ "%.2f"|format(total_ca) }} €</p>
+            </div>
+        </div>
+
+        <!-- Bloc commandes récentes -->
+        <div class="admin-table" style="margin-top: 2rem;">
+            <h3 style="padding: 1.5rem 1.5rem 0;">Dernières commandes</h3>
+            {% if commandes %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Email</th>
+                            <th>Total</th>
+                            <th>Statut</th>
+                            <th>Détails</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in commandes %}
+                            <tr>
+                                <td>#{{ c.id }}</td>
+                                <td>{{ c.date.strftime('%d/%m/%Y %H:%M') }}</td>
+
+                                <!-- Client : si lié à un Utilisateur, on affiche son nom, sinon les champs nom/prenom de la commande -->
+                                <td>
+                                    {% if c.utilisateur %}
+                                        {{ c.utilisateur.prenom }} {{ c.utilisateur.nom }}
+                                    {% else %}
+                                        {{ c.prenom }} {{ c.nom }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if c.utilisateur %}
+                                        {{ c.utilisateur.email }}
+                                    {% else %}
+                                        {{ c.email }}
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ "%.2f"|format(c.total) }} €</td>
+                                <td>{{ c.statut|replace('_', ' ') }}</td>
+                                <td>
+                                    {% if c.lignes %}
+                                        <details>
+                                            <summary>Voir</summary>
+                                            <ul>
+                                                {% for ligne in c.lignes %}
+                                                    <li>
+                                                        {{ ligne.quantite }} ×
+                                                        {{ ligne.produit.nom if ligne.produit else "Produit supprimé" }}
+                                                        — {{ "%.2f"|format(ligne.sous_total) }} €
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </details>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p style="padding: 1.5rem;">Aucune commande pour le moment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Lien vers la gestion des produits -->
+        <div style="margin-top: 2rem; text-align: right;">
+            <a href="{{ url_for('admin_produits') }}" class="btn btn-primary">
+                Gérer les produits
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

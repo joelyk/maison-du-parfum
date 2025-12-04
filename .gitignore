@@ -1,0 +1,14 @@
+# Environnement Python
+venv/
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Base SQLite locale
+maison_du_parfum.db
+
+# Dossiers système
+.DS_Store
+.idea/
+.vscode/

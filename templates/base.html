@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}La Maison du Parfum - Votre élégance, votre signature{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="{{ url_for('index') }}">
+                        <h1>La Maison du Parfum</h1>
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        <li><a href="{{ url_for('boutique') }}">Boutique</a></li>
+                        <li><a href="{{ url_for('a_propos') }}">À propos</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <!-- Espace client -->
+                    <div class="user-auth">
+                        {% if session.get('user_id') %}
+                            <span class="welcome-text">
+                                Bonjour {{ session.get('user_prenom', '') }}
+                            </span>
+                            <a href="{{ url_for('mon_compte') }}" class="auth-link">Mon compte</a>
+                            <span class="auth-separator">|</span>
+                            <a href="{{ url_for('deconnexion') }}" class="auth-link">Déconnexion</a>
+                        {% else %}
+                            <a href="{{ url_for('connexion') }}" class="auth-link">Connexion</a>
+                            <span class="auth-separator">/</span>
+                            <a href="{{ url_for('inscription') }}" class="auth-link">Créer un compte</a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Panier -->
+                    <a href="{{ url_for('panier') }}" class="cart-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cart-count" class="cart-count">
+                            {% if session.get('panier') %}
+                                {{ session['panier']|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>La Maison du Parfum</h3>
+                    <p>Votre élégance, votre signature</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        <li><a href="{{ url_for('boutique') }}">Boutique</a></li>
+                        <li><a href="{{ url_for('a_propos') }}">À propos</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Informations</h4>
+                    <ul>
+                        <li><a href="#">Livraison</a></li>
+                        <li><a href="#">Retours</a></li>
+                        <li><a href="#">Mentions légales</a></li>
+                        <li><a href="#">CGV</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> contact@lamaisonduparfum.com</p>
+                    <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+                    <div class="qr-code">
+                        <p>Scannez pour notre Facebook</p>
+                        <div class="qr-placeholder">[QR Code]</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 La Maison du Parfum. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+{% if session.get('user_prenom') %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // On salue l'utilisateur une seule fois par session navigateur
+        if (!sessionStorage.getItem('greeted')) {
+            const name = "{{ session['user_prenom'] }}";
+            alert("Bienvenue " + name + " 💐 Ravie de vous revoir !");
+            sessionStorage.setItem('greeted', 'true');
+        }
+    });
+</script>
+{% endif %}
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
